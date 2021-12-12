@@ -6,9 +6,8 @@
   margin-top: 6rem;
   border-radius: 4px;
   overflow: hidden;
-}
 
-.TodoTemplate .app-title {
+  .app-title {
     background: #22b8cf;
     color:white;
     height: 4rem;
@@ -16,8 +15,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-}
+  }
 
-.TodoTemplate .content {
-  background: white;
+  .content {
+    background: white;
+  }
 }
