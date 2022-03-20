@@ -40,7 +40,7 @@
     </div>
 
     <div class="fixed-action-btn" style="bottom: 45px; right: 24px;">
-        <a class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+        <a class="btn-floating btn-large waves-effect waves-light red" onclick="initMemo();"><i class="material-icons">add</i></a>
     </div>
 
     <div class="preloader-wrapper big active" style="position:absolute; z-index:1000; left:50%; top:50%; display:none;">
@@ -66,7 +66,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-database.js"></script>
     <script>
-      var auth, database, userInfo; //메모를 담아놓을 database, user 정보를 저장하는 userInfo
+      //전역변수 선언
+      var auth,
+          database, //메모를 담아놓을 database
+          userInfo, //user 정보를 저장하는 userInfo
+          selectedKey;  //선택된 메모의 키
 
       // Your web app's Firebase configuration
       const firebaseConfig = {
@@ -105,6 +109,14 @@
         var memoRef = database.ref('memos/' + userInfo.uid);  //firebase uid아래의 child를 가져옴
         
         memoRef.once('child_added', on_child_added);  //on함수를 통해 child가 added되었을때 뒤에 함수를 호출
+        memoRef.once('child_changed', function(data){ //메모가 수정되면
+          var key = data.key;
+          var txt = data.val().txt;
+          var title = txt.substring(0, txt.indexOf('\n'));
+
+          $("#" + key + " > .title").text(title);
+          $("#" + key + " > .txt").text(txt); 
+        })
 
         /*
           {
@@ -129,7 +141,7 @@
         var key = data.key;
         var memoData = data.val();
         var txt = memoData.txt;
-        var title = memoData.title;
+        var title = txt.substring(0, txt.indexOf('\n'));
         var firstTxt = txt.substr(0, 1);
 
         var html =
@@ -138,6 +150,7 @@
           "<span class=\"title\">" + title + "</span>" +
           "<p class='txt'>" + txt + "<br>" +
           "</p>" +
+          "<a href=\"#!\" onclick=\"fn_delete_data('"+key+"')\" class=\"secondary-content\"><i class=\"material-icons\">grade</I></a>" +
           "</li>";
 
         $(".collection").append(html);
@@ -150,14 +163,22 @@
           return;
         }
 
-        //push
-        memoRef.push({
-          txt : txt,
-          createDate : new Date().getTime()
-        })
+        // 업데이트 부분
+        if(selectedKey) {
+          var memoRef = database.ref('memos/' + userInfo.uid + '/' + selectedKey);
+          memoRef.update({
+            txt : txt,
+            updateDate : new Date().getTime()
+          });
+        } else {
+          //push
+          memoRef.push({
+            txt : txt,
+            createDate : new Date().getTime()
+          })
+        }
 
         get_memo_list();
-
       }
 
       // textarea의 focus가 빠졌을 때 
@@ -169,11 +190,28 @@
 
       //메모 클릭 시 출력
       function fn_get_data_one(key) {
+        selectedKey = key;
         var memoRef = database.ref('memos/' + userInfo.uid + '/' + key);
 
         memoRef.once('value').then(function(snapshot){  //한번만 불러오면되므로 once 함수 이용. once함수는 promise함수를 리턴
-          $(".textarea").val(snapshot.val().txt);
+          var txt = snapshot.val().txt;
+          $(".textarea").val(txt);
         });        
+      }
+
+      // 빨간색 플로팅 버튼 클릭 시 새로운 메모 작성
+      function initMemo() {
+        $(".textarea").val("");
+        selectedKey = null;
+      }
+
+      function fn_delete_data(key) {
+        if(!confirm('삭제하시겠습니까?')) {
+          return;
+        }
+        var memoRef = database.ref('memos/' + userInfo.uid + '/' + key);
+        memoRef.remove(); //firebase에서 삭제
+        $("#"+key).remove();  //jquery에서 삭제
       }
 
 
