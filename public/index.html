@@ -2,7 +2,7 @@
   <html>
     <head>
       <!--Import Google Icon Font-->
-      <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
       <!--Import materialize.css-->
       <!-- Compiled and minified CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css">
@@ -212,6 +212,7 @@
         var memoRef = database.ref('memos/' + userInfo.uid + '/' + key);
         memoRef.remove(); //firebase에서 삭제
         $("#"+key).remove();  //jquery에서 삭제
+        initMemo();
       }
 
 
