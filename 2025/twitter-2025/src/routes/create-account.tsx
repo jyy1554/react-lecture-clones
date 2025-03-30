@@ -1,49 +1,13 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
-import styled from "styled-components";
 import { auth } from "../firebase"; // firebase.ts 파일 안에 있음
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { FirebaseError } from "firebase/app";
+import { Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
 
-const Wrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 420px;
-  padding: 50px 0px;
-`;
-
-const Title = styled.h1`
-  font-size: 42px;
-`;
-
-const Form = styled.form`
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-`;
-
-const Input = styled.input`
-  padding: 10px 20px;
-  border-radius: 50px;
-  border: none;
-  width: 100%;
-  font-size: 16px;
-  /* type이 submit이면 */
-  &[type="submit"] {
-    cursor: pointer;
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`;
-
-const Error = styled.span`
-  font-weight: 600;
-  color: tomato;
-`;
+const errors = {
+  "auth/email-already-in-use": "That email already exists.",
+};
 
 export default function CreateAccount() {
   const navigate = useNavigate();
@@ -65,6 +29,7 @@ export default function CreateAccount() {
   };
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
     // 입력값이 비어있으면
     if(isLoading || name === "" || email === "" || password === "") {
       return; // kill the function
@@ -82,6 +47,10 @@ export default function CreateAccount() {
       navigate("/");
     } catch(e) {
       // setError
+      if(e instanceof FirebaseError) {  // FirebaseError는 클래스임
+        // console.log(e.code, e.message); // e.message만 봐도 되나 e.code를 이용하여 사용자에게 친절한 메세지를 줄수도 있음 (최상단 errors 객체 참고)
+        setError(e.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -98,6 +67,10 @@ export default function CreateAccount() {
         <Input type="submit" value={isLoading ? "Loading..." : "Create Account"} />
       </Form>
       {error !== "" ? <Error>{error}</Error> : null}
+      <Switcher>
+        Already have an account?{" "}
+        <Link to="/login">Log in &rarr;</Link>
+      </Switcher>
     </Wrapper>
   );
 }
