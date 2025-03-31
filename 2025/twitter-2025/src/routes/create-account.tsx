@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
-import { auth } from "../firebase"; // firebase.ts 파일 안에 있음
+import { auth, db } from "../firebase"; // firebase.ts 파일 안에 있음
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
@@ -44,6 +44,7 @@ export default function CreateAccount() {
       await updateProfile(credentials.user, {
         displayName: name,
       });
+      
       // redirect to the home page
       navigate("/");
     } catch(e) {

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { collection, getDocs, limit, orderBy, query, where } from "firebase/firestore";
 import { ITweet } from "../components/timeline";
 import Tweet from "../components/tweet";
+import EditNameForm from "../components/edit-name-form";
 
 const Wrapper = styled.div`
   display: flex;
@@ -35,6 +36,12 @@ const AvatarInput = styled.input`
   display: none;
 `;
 
+const NameWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+`;
+
 const Name = styled.span`
   font-size: 22px;
 `;
@@ -46,10 +53,26 @@ const Tweets = styled.div`
   width: 100%;
 `;
 
+const EditButton = styled.button`
+  background-color: gray;
+  color: white;
+  font-weight: 600;
+  border: 0;
+  font-size: 12px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+  border-radius: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+`;
+
 export default function Profile() {
   const user = auth.currentUser;
   const [avatar, setAvatar] = useState(null); // firebase storage 유료화되어 이미지 업로드는 생략
   const [tweets, setTweets] = useState<ITweet[]>([]);
+  const [edit, setEdit] = useState(false);
+  const [nickname, setNickname] = useState(user?.displayName ?? "");
+
   const fetchTweets = async() => {
     const tweetQuery = query(
       collection(db, "tweets"),
@@ -78,6 +101,8 @@ export default function Profile() {
     fetchTweets();
   }, []);
 
+  const onEdit = () => setEdit((prev) => !prev);
+
   return (
     <Wrapper>
       <AvatarUpload htmlFor="avatar">
@@ -86,10 +111,16 @@ export default function Profile() {
         </svg>}
       </AvatarUpload>
       <AvatarInput id="avatar" type="file" accept="image/*" />
-      <Name>
-        {/* {user?.displayName ? user.displayName : "Anonymous"} */}
-        {user?.displayName ?? "Anonymous"}
-      </Name>
+      <NameWrapper>
+        {edit ? 
+        <EditNameForm userId={user?.uid ?? ""} setEdit={setEdit} /> 
+        : 
+        <>
+          <Name>{user?.displayName ?? "Anonymous"}</Name>
+          <EditButton onClick={onEdit}>Edit</EditButton>
+        </>
+        }
+      </NameWrapper>
       <Tweets>
         {tweets.map(tweet => <Tweet key={tweet.id} {...tweet} />)}
       </Tweets>

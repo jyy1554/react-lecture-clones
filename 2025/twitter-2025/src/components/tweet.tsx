@@ -74,7 +74,7 @@ export default function Tweet({username, tweet, userId, id}: ITweet) {
   return (
     <Wrapper>
       <Column>
-        <Username>{username}</Username>
+        <Username>{user?.displayName ?? "Anonymous"}</Username>
         {!edit ? <Payload>{tweet}</Payload> : <EditTweetForm tweet={tweet} userId={userId} id={id} setEdit={setEdit} />}
         {user?.uid === userId && !edit ? 
           <>
