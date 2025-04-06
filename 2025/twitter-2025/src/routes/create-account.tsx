@@ -1,14 +1,18 @@
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
-import { auth, db } from "../firebase"; // firebase.ts 파일 안에 있음
+import { auth } from "../firebase"; // firebase.ts 파일 안에 있음
 import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "firebase/app";
 import { Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
 import GithubButton from "../components/github-btn";
+import styled from "styled-components";
 
-const errors = {
-  "auth/email-already-in-use": "That email already exists.",
-};
+// const errors = {
+//   "auth/email-already-in-use": "That email already exists.",
+// };
+
+const Error = styled.div`
+`;
 
 export default function CreateAccount() {
   const navigate = useNavigate();

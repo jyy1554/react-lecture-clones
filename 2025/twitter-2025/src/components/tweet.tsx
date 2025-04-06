@@ -56,7 +56,7 @@ const EditButton = styled.button`
   cursor: pointer;
 `;
 
-export default function Tweet({username, tweet, userId, id}: ITweet) {
+export default function Tweet({tweet, userId, id}: ITweet) {
   const user = auth.currentUser;
   const [edit, setEdit] = useState(false);
   const onDelete = async() => {

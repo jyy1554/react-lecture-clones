@@ -5,6 +5,10 @@ import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { Form, Input, Switcher, Title, Wrapper } from "../components/auth-components";
 import GithubButton from "../components/github-btn";
+import styled from "styled-components";
+
+const Error = styled.div`
+`;
 
 export default function CreateAccount() {
   const navigate = useNavigate();
