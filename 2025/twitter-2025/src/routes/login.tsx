@@ -8,6 +8,7 @@ import GithubButton from "../components/github-btn";
 import styled from "styled-components";
 
 const Error = styled.div`
+  color: tomato;
 `;
 
 export default function CreateAccount() {

@@ -56,7 +56,7 @@ const EditButton = styled.button`
   cursor: pointer;
 `;
 
-export default function Tweet({tweet, userId, id}: ITweet) {
+export default function Tweet({tweet, userId, username, id}: ITweet) {
   const user = auth.currentUser;
   const [edit, setEdit] = useState(false);
   const onDelete = async() => {
@@ -74,7 +74,7 @@ export default function Tweet({tweet, userId, id}: ITweet) {
   return (
     <Wrapper>
       <Column>
-        <Username>{user?.displayName ?? "Anonymous"}</Username>
+        <Username>{username ?? "Anonymous"}</Username>
         {!edit ? <Payload>{tweet}</Payload> : <EditTweetForm tweet={tweet} userId={userId} id={id} setEdit={setEdit} />}
         {user?.uid === userId && !edit ? 
           <>
